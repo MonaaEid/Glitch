@@ -1,0 +1,170 @@
+/* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Basic page styling */
+body {
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #7b9e82 40%, #e3bce6 100%);
+    color: #333;
+}
+
+/* Header styling */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: white;
+    border-bottom: 3px solid #31EC56; /* Malachite green */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#logo {
+    background-image: url('../logo/glitch.png');
+    background-repeat: no-repeat;
+    height: 100%;
+	width: 142px;
+    background-position: center;
+    /* background-position: 0%; */
+    opacity: 100%;
+
+	/* margin-left: 50px; */
+
+    font-size: 2rem;
+    /* Heliotrope */
+    color: #EE72F8;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+}
+
+nav ul li {
+    margin-left: 1rem;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #31EC56; /* Malachite green */
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: #EE72F8; /* Heliotrope */
+}
+
+/* Main content styling */
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.content {
+    text-align: center;
+    background: white;
+    padding: 2rem 3rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.tagline {
+    background: #EE72F8; /* Heliotrope */
+    color: white;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #31EC56; /* Malachite green */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.file-label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #31EC56; /* Malachite green */
+}
+
+.file-input {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border: 1px solid #EE72F8; /* Heliotrope */
+    border-radius: 5px;
+    outline: none;
+}
+
+.upload-button {
+    background: #7b9e82; /* Malachite green */
+    color: #31EC56;
+    padding: 0.5rem 1.5rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: background 0.3s;
+}
+
+.upload-button:hover {
+    background: #EE72F8; /* Heliotrope */
+}
+
+.chose-file-button {
+    background: #31EC56; /* Malachite green */
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: background 0.3s;
+}
+
+.chose-file-button:hover {
+    background: #EE72F8; /* Heliotrope */
+}
+input[type="file" i] {
+    display:grid;
+
+    background: #7b9e82; /* Malachite green */
+    color: #31EC56;
+    padding: 0.5rem 1.5rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: background 0.3s;
+}
+/* Footer styling */
+footer {
+    background: #7b9e82; /* Malachite green */
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    border-top: 5px solid #EE72F8; /* Heliotrope */
+    border-radius: 15px 15px 0 0;
+}
