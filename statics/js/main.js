@@ -2,8 +2,6 @@
 let client_id = Date.now();
 document.querySelector("#ws-id").textContent = client_id;
 let session_id = Date.now() + "wsession"
-// help me write comdition to handle the session_ id value.. whether
-//  the request from fastapi was from /stream or join-party
 document.querySelector(".tagline").textContent = session_id;
 
 var ws = new WebSocket(`ws://localhost:8000/ws/${client_id}/${session_id}`);
