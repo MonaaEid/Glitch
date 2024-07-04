@@ -1,9 +1,9 @@
 /* Reset some default styles */
-* {
+/* * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
+} */
 
 /* Basic page styling */
 body {
@@ -14,6 +14,8 @@ body {
     min-height: 100vh;
     background: linear-gradient(135deg, #7b9e82 40%, #e3bce6 100%);
     color: #333;
+     margin: 0px;
+    padding: 0px; 
 }
 
 /* Header styling */
@@ -80,7 +82,23 @@ main {
     border-radius: 15px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
+.screen {
+    /* width: 100%; */
+    /* height: 100%; */
+    max-width: 300px;
+    background: #000;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+/* Chat corner */
 
+.chat-corner {
+    text-align: center;
+    background: white;
+    padding: 2rem 3rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
 .tagline {
     background: #EE72F8; /* Heliotrope */
     color: white;
@@ -129,13 +147,13 @@ form {
     transition: background 0.3s;
 }
 
-.upload-button:hover {
+button:hover {
     background: #EE72F8; /* Heliotrope */
 }
 
-.chose-file-button {
-    background: #31EC56; /* Malachite green */
-    color: white;
+button {
+    background: #7b9e82; /* Malachite green */
+    color: #31EC56;
     padding: 0.5rem 1.5rem;
     border: none;
     cursor: pointer;
@@ -159,6 +177,9 @@ input[type="file" i] {
     font-size: 1rem;
     transition: background 0.3s;
 }
+/*chat corner*/
+
+
 /* Footer styling */
 footer {
     background: #7b9e82; /* Malachite green */
@@ -167,4 +188,25 @@ footer {
     padding: 1rem 0;
     border-top: 5px solid #EE72F8; /* Heliotrope */
     border-radius: 15px 15px 0 0;
+}
+
+input[type="text"] {
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    border: 1px solid #EE72F8; /* Heliotrope */
+    border-radius: 5px;
+    outline: none;
+}
+input[type="text"]:focus {
+    border-color: #EE72F8; /* Malachite green */
+}
+
+input[type="text"] {
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    width: 50px;
+    border: 1px solid #EE72F8; /* Heliotrope */
+    border-radius: 5px;
+    outline: none;
 }
