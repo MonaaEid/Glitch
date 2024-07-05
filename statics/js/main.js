@@ -1,6 +1,6 @@
 
 let client_id = Date.now();
-document.querySelector("#ws-id").textContent = client_id;
+// document.querySelector("#ws-id").textContent = client_id;
 let session_id = Date.now() + "wsession"
 document.querySelector(".tagline").textContent = session_id;
 
@@ -26,7 +26,6 @@ function updateVideoPlayer(filePath) {
 	video.load();
 	}
 }
-// updateVideoPlayer('http://localhost:8000/stream');
 
 ws.onmessage = async function(event) {
 	const data = JSON.parse(event.data);

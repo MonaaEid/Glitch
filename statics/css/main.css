@@ -1,9 +1,9 @@
 /* Reset some default styles */
-/* * {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-} */
+}
 
 /* Basic page styling */
 body {
@@ -77,18 +77,24 @@ main {
 
 .content {
     text-align: center;
+    width: 1000px;
+    min-height: 500px;
+    /* height:700px; */
+    align-items: center;
     background: white;
     padding: 2rem 3rem;
     border-radius: 15px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    justify-content: center;
 }
 .screen {
     /* width: 100%; */
     /* height: 100%; */
-    max-width: 300px;
+    max-width: 500px;
     background: #000;
     border-radius: 15px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    justify-content: center;
 }
 /* Chat corner */
 
@@ -189,24 +195,21 @@ footer {
     border-top: 5px solid #EE72F8; /* Heliotrope */
     border-radius: 15px 15px 0 0;
 }
-
-input[type="text"] {
+input[type="text"], input[type="password"], input[type="email"]{
     padding: 0.5rem;
     margin-bottom: 1rem;
-    width: 100%;
+    width: 150px;
     border: 1px solid #EE72F8; /* Heliotrope */
     border-radius: 5px;
     outline: none;
 }
 input[type="text"]:focus {
-    border-color: #EE72F8; /* Malachite green */
+    border-color: #31EC56; /* Malachite green */
 }
 
-input[type="text"] {
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    width: 50px;
-    border: 1px solid #EE72F8; /* Heliotrope */
-    border-radius: 5px;
-    outline: none;
+
+video {
+    width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
