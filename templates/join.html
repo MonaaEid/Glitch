@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+<h1>{% block title %}Glitch {% endblock %}</h1>
+{% block header %}{% endblock %}
+
+{% block content %}
+<h1>Streaming...</h1>
+<h3>Your room code: </h3>
+            <div class="tagline">
+            </div>
+            <div id="output">
+                <video id="my-player" class="video-js" controls preload="auto"
+                data-setup='{}'> </video>
+               
+           </div>
+{% endblock %}
+
+{% block chat %}
+<!-- <div class="chat_corner">
+    <h2>Your ID: <span id="ws-id"></span></h2>
+    <form action="" onsubmit="sendMessage(event)">
+        <input type="text" id="messageText" autocomplete="off" />
+        <button>Send</button>
+    </form>
+    <ul id='messages'>
+    </ul>
+</div> -->
+{% endblock %}

@@ -1,48 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glitch</title>
-    <link rel="stylesheet" href="statics/css/main.css">
-    <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet"> -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+{% extends 'layout.html' %}
+<h1>{% block title %}Glitch {% endblock %}</h1>
+{% block header %}{% endblock %}
 
-</head>
-<body>
-    <header>
-        <div id="logo">
-            <!-- <img src="../statics/logo/glitch.png" alt="logo"> -->
-            <span>Glitch</span>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="#">Contact</a></li>
-                <li><a href="#">Menu</a></li>
-            </ul>
-        </nav>
-    </header>
-    
-    <main>
-        <div class="content">
+{% block content %}
+<h1>Glitch...</h1>
             <div class="tagline">
-                innovative and futuristic - evoke an exciting feeling
+            Host a stream or join a team
             </div>
-            <h1>WE MAKE TECH FOR GOOD</h1>
-            <form action="/upload-torrent/" method="post" enctype="multipart/form-data">
-                <label for="file-upload" class="file-label">Choose a file:</label>
-                <input type="file" id="file-upload" name="file" class="file-input chose-file-button">
-                <button type="submit" class="upload-button">Upload</button>
-            </form>
-        </div>
-    </main>
+            <br>
+            <a class="upload-button" href="/video" >Start Stream</a>
+            <a href="" id="joinParty" class="upload-button" hx-get="/join">Join Stream</a>
+            <div id="join-form-container"></div>
+                <!-- <button type="button" id="join-button" hx-trigger="click" hx-swap="outerHTML">Join</button> -->
+            </div>
+            <script>
+                    document.getElementById("joinParty").addEventListener("click", function() {
+                    var formContainer = document.getElementById("join-form-container");
+                    formContainer.innerHTML = `
+                         <form id="join-form" action="/join-party" method="post">
+                            <input type="text" name="room"  placeholder="Enter the room code">
+                            <button type="submit" id="join-button" hx-trigger="click" hx-swap="outerHTML">Join</button>
+                            <button type="button" id="cancel-button" hx-trigger="click" hx-swap="outerHTML">Cancel</button>
+                        </form>
+                    `;
+                    document.getElementById("cancel-button").addEventListener("click", function() {
+                        formContainer.innerHTML = `
+    
+                            
+                        `;
+                    });
+                });
+            </script>
 
-    <footer>
-        <p>&copy; 2024 Video Streaming Service. All rights reserved.</p>
-    </footer>
-</body>
-</html>
+        </div>
+{% endblock %}
