@@ -7,36 +7,11 @@ from fastapi.templating import Jinja2Templates
 from fastapi import FastAPI, Request
 from typing import Optional
 from starlette.middleware.authentication import AuthenticationMiddleware
-
+from starlette.authentication import requires
 
 templates = Jinja2Templates(directory="templates")
 app = FastAPI()
 
-@app.middleware("http")
-async def add_user_to_request(request: Request, call_next):
-    token = request.cookies.get("access_token")
-    request.state.user = None
-
-    if token:
-        username: Optional[str] = schemas.decode_access_token(token)
-        if username:
-            try:
-                db: Session = next(get_db())
-                user = schemas.get_user(db, username)
-                if user:
-                    request.state.user = user
-            except Exception as e:
-                print(f"Error fetching user: {e}")
-
-    response = await call_next(request)
-    return response
-app.add_middleware(AuthenticationMiddleware, backend=add_user_to_request)
-
-
-@app.get("/")
-def home(request: Request):
-    """Home page"""
-    return templates.TemplateResponse("home.html", {"request": request})
 
 router = APIRouter()
 
@@ -92,12 +67,12 @@ def update_user(user_id: int, user: schemas.UserCreate, db: Session = Depends(ge
     return crud.update_user(db=db, user_id=user_id, user=user)
 
 @router.delete("/users/{user_id}", response_model=schemas.User)
-def delete_user(user_id: int, db: Session = Depends(get_db)):
+def delete_user(user_id: int):
     """Delete a user by id"""
-    return crud.delete_user(db=db, user_id=user_id)
+    return crud.delete_user(user_id=user_id)
 
-@router.post("/logout")
+@router.get("/logout")
 def logout_user(response: Response):
     """Logout a user"""
     response.delete_cookie("access_token")
-    return {"message": "Logout successful"}
+    return {"message": "Logged out"}

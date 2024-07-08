@@ -1,13 +1,17 @@
 from fastapi.templating import Jinja2Templates
-from fastapi import Request
+from fastapi import Request, middleware
 from fastapi import APIRouter, HTTPException, UploadFile, File, BackgroundTasks, FastAPI, Form
 from fastapi.responses import HTMLResponse, StreamingResponse
 import libtorrent as lt
 import os
 import time
 from fastapi.staticfiles import StaticFiles
+from app.index import ConnectionManager
+from starlette.authentication import requires
+from starlette.responses import RedirectResponse
 import asyncio
-import io
+import aiofiles
+
 
 app = FastAPI()
 
@@ -19,7 +23,7 @@ router = APIRouter()
 if not os.path.exists("/downloads"):
     os.mkdir("/downloads")
 TORRENT_DOWNLOAD_PATH = "./downloads"
-# TORRENT_DOWNLOAD_PATH2 ="/downloads/test.mp4"
+TORRENT_DOWNLOAD_PATH2 ="/downloads/test.mp4"
 async def get_file_path_from_torrent(torrent):
     """Get the path of the video file in the torrent."""
     file_content = await torrent.read()
@@ -86,15 +90,16 @@ def download_torrent(torrent):
     print('\nDownload complete')
 
 
-def file_streamer(file_path: str, chunk_size: int = 1024 * 1024):
+async def file_streamer(file_path: str, chunk_size: int = 1024 * 1024):
     """Stream a video file."""
-    with open(file_path, "rb") as file:
+    async with aiofiles.open(file_path, 'rb') as f:
         while True:
-            chunk = file.read(chunk_size)
+            chunk = await f.read(chunk_size)
             if not chunk:
                 break
             yield chunk
 
+@requires('authenticated', redirect='/login')
 @router.get("/", response_class=HTMLResponse)
 async def read_item(request: Request):
     return templates.TemplateResponse("index.html", {"request": request, "name": "FastAPI"})
@@ -103,6 +108,7 @@ async def read_item(request: Request):
 async def video(request: Request):
     return templates.TemplateResponse("stream.html", {"request": request, "name": "FastAPI"})
 
+manager = ConnectionManager()
 
 @router.post("/join-party/", response_class=HTMLResponse)
 async def join_party(request: Request, room: str=Form(...)):
@@ -110,15 +116,15 @@ async def join_party(request: Request, room: str=Form(...)):
 
 
 @router.post("/stream/", response_class=HTMLResponse)
-async def stream_torrent(background_tasks: BackgroundTasks, request: Request, file: UploadFile = File(...)):
+async def stream_torrent(request: Request, file: UploadFile = File(...)):
     try:
 
         file_contents = await file.read()
         await file.seek(0)
-        await asyncio.sleep(10)
+        asyncio.create_task(download_torrent(file_contents))
+        await asyncio.sleep(15)
         file_location = await get_file_path_from_torrent(file)
-        await asyncio.sleep(10)
-        background_tasks.add_task(download_torrent, file_contents)
+        await asyncio.sleep(15)
         return templates.TemplateResponse("video.html", {"request": request, "filepath": file_location})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
