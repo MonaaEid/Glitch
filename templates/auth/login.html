@@ -1,19 +1,19 @@
 {% extends 'layout.html' %}
-
 <h1>{% block title %}Log In{% endblock %}</h1>
 
-{% block header %}login{% endblock %}
-
 {% block content %}
+<div class="tagline"> 
+  Login
+</div>
 <div class="container2">
 
   <form method="post" action="/token">
     <label for="Username">Username</label>
-    <input name="username" type="username" id="username" required>
+    <input name="username" type="text" id="username" required>
     
     <label for="password">Password</label>
     <input type="password" name="password" id="password" required>
-    <input type="submit" value="Log In">
+    <input type="submit" value="Log In" class="upload-button">
   </form>
 </div>
 {% endblock %}

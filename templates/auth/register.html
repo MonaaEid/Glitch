@@ -2,9 +2,12 @@
 
 <h1>{% block title %}Register{% endblock %}</h1>
 
-{% block header %}Register{% endblock %}
 
 {% block content %}
+<div class="tagline"> 
+
+  Register
+</div>
   <div class="container2">
 
   <form method="post" action="/users/">
@@ -14,7 +17,7 @@
     <input type="email" name="email" id="email" required>
     <label for="password">Password</label>
     <input type="password" name="password" id="password" required>
-    <input type="submit" value="Register">
+    <input type="submit" value="Register" class="upload-button">
   </form>
 </div>
 {% endblock %}
