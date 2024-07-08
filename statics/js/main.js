@@ -1,93 +1,155 @@
-
 let client_id = Date.now();
 // document.querySelector("#ws-id").textContent = client_id;
-let session_id = Date.now() + "wsession"
-document.querySelector(".tagline").textContent = session_id;
+// let session_id = Date.now() + "wsession"
+const room = "2";
+// document.querySelector(".tagline").textContent = room;
+const ws = new WebSocket(`ws://localhost:8000/ws/${client_id}/${room}`);
+let currentVideoPath = '';
+const video = document.getElementById('my-player');
+let vidSource = document.getElementById('video-source');
+let peerConnections = {};
+const configuration = {
+    iceServers: [
+		{
+		  urls: "stun:stun.relay.metered.ca:80",
+		},
+		{
+		  urls: "turn:global.relay.metered.ca:80",
+		  username: "35d95514353e8310308a79a9",
+		  credential: "NqTyFDOEFhAZnYed",
+		},
+		{
+		  urls: "turn:global.relay.metered.ca:80?transport=tcp",
+		  username: "35d95514353e8310308a79a9",
+		  credential: "NqTyFDOEFhAZnYed",
+		},
+		{
+		  urls: "turn:global.relay.metered.ca:443",
+		  username: "35d95514353e8310308a79a9",
+		  credential: "NqTyFDOEFhAZnYed",
+		},
+		{
+		  urls: "turns:global.relay.metered.ca:443?transport=tcp",
+		  username: "35d95514353e8310308a79a9",
+		  credential: "NqTyFDOEFhAZnYed",
+		},
+	],
+};
+// const peerConnection = new RTCPeerConnection(configuration);
 
-var ws = new WebSocket(`ws://localhost:8000/ws/${client_id}/${session_id}`);
+function getPeerConnection(client_id) {
+    if (!peerConnections[client_id]) {
+        const peerConnection = new RTCPeerConnection(configuration);
+        peerConnections[client_id] = peerConnection;
 
-let video = document.getElementById('my-player');
-function updateVideoPlayer(filePath) {
-	const fileExtension = filePath.split('.').pop().toLowerCase();
-	const mimeTypes = {
-		mp4: 'video/mp4',
-		mkv: 'video/x-matroska',
-		avi: 'video/x-msvideo',
-		mov: 'video/quicktime',
-		wmv: 'video/x-ms-wmv'
-	};
-
-	let source = document.createElement('source');
-	source.src = filePath;
-	source.type = mimeTypes[fileExtension] || 'video/mp4';
-	if (video !== null) {
-	video.innerHTML = '';
-	video.appendChild(source);
-	video.load();
-	}
+        peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+                ws.send(JSON.stringify({
+                    type: 'candidate',
+                    candidate: event.candidate,
+                    client_id: client_id
+                }));
+            }
+        };
+        peerConnection.ontrack = (event) => {
+            video.srcObject = event.streams[0];
+        };
+    }
+    return peerConnections[client_id];
 }
 
-ws.onmessage = async function(event) {
-	const data = JSON.parse(event.data);
-	switch (data.type) {
-		case 'offer':
-			await handleOffer(data.offer, data.client_id);
-			break;
-		case 'answer':
-			await handleAnswer(data.answer);
-			break;
-		case 'candidate':
-			await handleCandidate(data.candidate);
-			break;
-		case 'sync':
-			syncPlayback(data.time);
-			break;
-		default:
-			appendMessage(event.data);
-			break;
-	}
+
+
+async function createAndSendOffer() {
+    const peerConnection = getPeerConnection(client_id);
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+    if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+            type: 'offer',
+            offer: offer,
+            client_id: client_id
+        }));
+    }
+}
+
+function syncPlayback(time) {
+    const diff = Math.abs(video.currentTime - time);
+    if (diff > 1) {
+        video.currentTime = time;
+    }
+}
+
+async function handleOffer(offer, remoteClientId) {
+    const peerConnection = getPeerConnection(remoteClientId);
+    console.log('Handling offer:', offer);
+    await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+    console.log('Peer connection state after setting remote description:', peerConnection.signalingState);
+    const answer = await peerConnection.createAnswer();
+    await peerConnection.setLocalDescription(answer);
+
+    ws.send(JSON.stringify({
+        type: 'answer',
+        answer: answer,
+        client_id: remoteClientId
+    }));
+
+    ws.send(JSON.stringify({
+        type: 'video_path',
+        path: currentVideoPath,
+        client_id: remoteClientId,
+    }));
+    // updateVideoPlayer(vidSource.src);
+
+    ws.send(JSON.stringify({
+        type: 'sync',
+        time: video.currentTime,
+        client_id: remoteClientId
+    }));
+}
+
+async function handleCandidate(candidate, remoteClientId) {
+    const peerConnection = getPeerConnection(remoteClientId);
+    await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+ws.onmessage = async (event) => {
+    const data = JSON.parse(event.data);
+    switch (data.type) {
+        case 'offer':
+            await handleOffer(data.offer, data.client_id);
+            break;
+        case 'candidate':
+            await handleCandidate(data.candidate, data.client_id);
+            break;
+        case 'sync':
+            syncPlayback(data.time);
+            break;
+        default:
+            console.log(`Received unknown message type: ${data.type}`);
+            break;
+    }
 };
 
-ws.onmessage = function(event) {
-		var messages = document.getElementById('messages')
-		var message = document.createElement('li')
-		var content = document.createTextNode(event.data)
-		message.appendChild(content)
-		messages.appendChild(message)
-		const [command, timestamp] = event.data.split(':');
-		switch (command) {
-			case "play":
-				// video.src = fetchVideo();
-				video.currentTime = parseFloat(timestamp);
-				video.play();
-				break;
-			case "pause":
-				video.currentTime = parseFloat(timestamp);
-				video.pause();
-				break;
-			case "seek":
-				videoPlayer.currentTime = parseFloat(timestamp);
-				break;
-		}
-	};
-	function sendMessage(event) {
-		var input = document.getElementById("messageText")
-		ws.send(input.value)
-		input.value = ''
-		event.preventDefault()
-	}
+ws.onerror = (event) => {
+    console.error('WebSocket error:', event);
+};
 
-	function sendPlay() {
-		const timestamp = videoPlayer.currentTime;
-		ws.send(`play:${timestamp}`);
-	}
-	
-	function sendPause() {
-		const timestamp = videoPlayer.currentTime;
-		ws.send(`pause:${timestamp}`);
-	}
-	
-	function sendSeek(timestamp) {
-		ws.send(`seek:${timestamp}`);
-	}
+ws.onclose = (event) => {
+    console.log('WebSocket closed:', event);
+};
+
+
+// ws.onopen = async (event) => {
+//     console.log('WebSocket connection opened:', event);
+//     await createAndSendOffer();
+// };
+
 
