@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Glitch</title>
+    <script src="https://cdn.jsdelivr.net/npm/simple-peer/simplepeer.min.js"></script>
     <link href="{{ url_for('statics', path='css/main.css') }}" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/simple-peer/simplepeer.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.min.js"></script>
@@ -20,30 +21,28 @@
         </div>
         <nav>
             <ul>
-                <li><a href="#">Contact</a></li>
-                <li><a href="#">Menu</a></li>
-                {% if request.state.user %}
-            <li><a href="/logout">Log Out</a></li>
-            <li><a class="active">{{ request.user.username }}</a></li>
-        {% else %}
-            <li><a href="/register">Register</a></li>
-
-            <li><a href="/login">Log In</a></li>
-        {% endif %}
-
+                <li><a href="/">Home</a></li>
+                {% if request.cookies.get("access_token") %}
+                <li>{{ username }}</li>
+                <li><a href="/logout">Log Out</a></li>
+        
+                {% else %}
+                <li><a href="/register">Register</a></li>
+                <li><a href="/login">Log In</a></li>
+                {% endif %}
             </ul>
         </nav>
     </header>
     
     <main>
         <div class="content">
-            <div class="tagline">
-                {% block header %}{% endblock %}
-            </div>
            
             {% block content %} {% endblock %}
         </div>
     </main>
+<div>
+    {% block chat %}{% endblock %}
+</div>
 
     <footer>
         <p>&copy; 2024 Video Streaming Service With Torrent. All rights reserved.</p>
@@ -51,6 +50,5 @@
     <script src="https://unpkg.com/htmx.org@1.6.1"></script>
     <script src="https://unpkg.com/htmx.org@2.0.0" integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw" crossorigin="anonymous"></script>
 
-    <script src="{{ url_for('statics', path='js/main.js') }}"> </script>
 </body>
 </html>
