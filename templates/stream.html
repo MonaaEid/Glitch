@@ -6,29 +6,29 @@
 
 {% block content %}
 <h1>Streaming...</h1>
-<h3>Your room code: </h3>
+<!-- <h3>Your room code: </h3> -->
 
         <div class="tagline">
         </div>
         <div>
-            <form enctype="multipart/form-data" hx-post="/stream" hx-target="#output" hx-swap="beforeend"
-                hx-include="#file-upload">
+            <!-- <form enctype="multipart/form-data" hx-post="/stream" hx-target="#output" hx-swap="beforeend"
+                hx-include="#file-upload"> -->
+                <form enctype="multipart/form-data" action="/stream" method="post" >
                 <label for="file-upload" class="file-label">Choose a file:</label>
                 <input type="file" id="file-upload" name="file" class="file-input chose-file-button">
-                <button type="submit" id="uploading" class="upload-button">Upload</button>
+                <button type="submit" id="stream-button" class="upload-button">Upload</button>
             </form>
-            <div id="output">
+            <!-- <div id="output">
         
-            </div>
+            </div> -->
         
         </div>
         
-        <script src="{{ url_for('statics', path='js/main.js') }}"> </script>
 
 {% endblock %}
 
 {% block chat %}
-<!-- <div class="chat_corner">
+<!-- <div class="chat_corner" hidden>
     <h2>Your ID: <span id="ws-id"></span></h2>
     <form action="" onsubmit="sendMessage(event)">
         <input type="text" id="messageText" autocomplete="off" />
@@ -37,4 +37,6 @@
     <ul id='messages'>
     </ul>
 </div> -->
+<!-- <script src="{{ url_for('statics', path='js/main.js') }}"> </script> -->
+
 {% endblock %}

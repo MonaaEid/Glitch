@@ -1,155 +1,45 @@
+{% extends 'layout.html' %}
+
+<h1>{% block title %}Glitch{% endblock %}</h1>
 
 
-<div class="screen">
-    
+
+{% block content %}
+<h1>Streaming...</h1>
     <video id="my-player" class="video-js" controls preload="auto"
         data-setup='{}'>
-        <p class="vjs-no-js">
-            To view this video please enable JavaScript, and consider upgrading to a
-            web browser that
-            <a href="https://videojs.com/html5-video-support/" target="_blank">
-                supports HTML5 video
-            </a>
-        </p>
+		<source id="video-source" src="" type="">
+		Your browser does not support the video tag.
+	</video>
     </video>
-</div> 
 
+	<script src="{{ url_for('statics', path='js/main.js') }}"> </script>
 <script>
-function updateVideoPlayer(filePath) {
-let video = document.getElementById('my-player');
+	
+	function updateVideoPlayer(filePath) {
+    const fileExtension = filePath.split('.').pop().toLowerCase();
+    const mimeTypes = {
+        mp4: 'video/mp4',
+        mkv: 'video/x-matroska',
+        avi: 'video/x-msvideo',
+        mov: 'video/quicktime',
+        wmv: 'video/x-ms-wmv'
+    };
 
-	const fileExtension = filePath.split('.').pop().toLowerCase();
-	const mimeTypes = {
-		mp4: 'video/mp4',
-		mkv: 'video/x-matroska',
-		avi: 'video/x-msvideo',
-		mov: 'video/quicktime',
-		wmv: 'video/x-ms-wmv'
-	};
-
-	let source = document.createElement('source');
-	source.src = filePath;
-	source.type = mimeTypes[fileExtension] || 'video/mp4';
-	if (video !== null) {
-	video.innerHTML = '';
-	video.appendChild(source);
-	video.load();
-	}
-}
-updateVideoPlayer('{{ filepath }}');
-const peer = new RTCPeerConnection({
-	iceServers: [
-	  { urls: 'stun:stun.l.google.com:19302' },
-	]
-  });
-
-peer.onicecandidate = (event) => {
-	if (event.candidate) {
-		ws.send(JSON.stringify({
-			type: 'candidate',
-			candidate: event.candidate,
-			client_id: client_id
-		}));
-	}
-};
-
-peer.ontrack = (event) => {
-	if (video.srcObject !== event.streams[0]) {
-		video.srcObject = event.streams[0];
-	  }
-	video.play();
-};
-
-async function sendOffer() {
-	const offer = await peer.createOffer();
-	await peer.setLocalDescription(offer);
-	ws.send(JSON.stringify({ type: 'offer', offer: offer, client_id: client_id }));
-}
-
-async function handleOffer(offer, sender_id) {
-	await peer.setRemoteDescription(new RTCSessionDescription(offer));
-	const answer = await peer.createAnswer();
-	await peer.setLocalDescription(answer);
-	ws.send(JSON.stringify({ type: 'answer', answer: answer, client_id: sender_id }));
-}
-
-async function handleAnswer(answer) {
-	await peer.setRemoteDescription(new RTCSessionDescription(answer));
-}
-
-async function handleCandidate(candidate) {
-	try {
-		await peer.addIceCandidate(new RTCIceCandidate(candidate));
-	} catch (e) {
-		console.error('Error adding received ice candidate', e);
-	}
-}
-
-async function startStream() {
-    if (video !== null && video.captureStream) {
-        const localStream = video.captureStream();
-        try {
-            localStream.getTracks().forEach(track => peer.addTrack(track, localStream));
-            sendOffer(); // Ensure this function is defined and handles the signaling process
-        } catch (e) {
-            console.error('Error starting stream or sending offer', e);
+    const source = document.querySelector('#video-source');
+    if (source) {
+        source.src = filePath;
+        source.type = mimeTypes[fileExtension] || 'video/mp4';
+        if (video) {
+            video.load();
         }
+        currentVideoPath = filePath;
+        console.log('Video source updated:', filePath);
     } else {
-        alert('Your browser does not support captureStream.');
+        console.error("Video source element not found");
     }
 }
 
-if ('captureStream' in HTMLMediaElement.prototype) {
-    const videoElement = document.querySelector('#my-player');
-    if (videoElement) {
-        const stream = videoElement.captureStream();
-
-    } else {
-        console.error('Video element not found.');
-
-    }
-} else {
-
-    console.error('Your browser does not support captureStream.');
-
-}
-
-function sendPlay() {
-		const timestamp = videoPlayer.currentTime;
-		ws.send(`play:${timestamp}`);
-	}
-	
-	function sendPause() {
-		const timestamp = videoPlayer.currentTime;
-		ws.send(`pause:${timestamp}`);
-	}
-	
-	function sendSeek(timestamp) {
-		ws.send(`seek:${timestamp}`);
-	}
-
-
-
-// ws.onopen = function() {
-// 	if (isHost()) {
-// 		startStream();
-// 	}
-// };
-
-// function isHost() {
-// 	if (window.location.search.includes('host=true')) {
-// 	return true;
-// 	}
-// }
-
-// 	peer.ontrack = (event) => {
-// 		const videoElement = document.getElementById('my-player');
-// 		videoElement.srcObject = event.streams[0];
-// 		videoElement.play();
-// 		videoElement.controls = true;
-// 	};
-// document.addEventListener('DOMContentLoaded', function () {
-//     updateVideoPlayer('{{ filepath }}');
-// });
-
+updateVideoPlayer('{{filepath}}')
 </script>
+{% endblock %}
